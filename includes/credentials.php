@@ -5,6 +5,11 @@ Credentials for eProtect and Vantiv eCommerce
 $ecomm_merchant_id = "1268016";
 $ecomm_login = "u82918854344049902";
 $ecomm_password = "QVtHWtb6UGk5XCz";
+
+/* 
+This paypageid is configured for use with Litle, returning a LitleToken
+*/
+
 $eprotect_paypageid = "pGdxWrykrdvNkBK3";
 $eprotect_url = "https://request-prelive.np-securepaypage-litle.com/LitlePayPage/litle-api2.js";
 $applepay_csr = "-----BEGIN CERTIFICATE REQUEST-----
@@ -14,6 +19,9 @@ vj5scmqGMsrAqALDKnGvNFuSJAbNpQTT5KPUAZztS6egvotnYlVm+D9UrAA/kQ9O
 jCkYC/fTKVVcRAIgYpTUW55EkDgBGKqSjOQlOECKBao0V4RGSmljzS24kC0=
 -----END CERTIFICATE REQUEST-----";
 
+/*
+Credentials for the MercuryPay endpoint
+*/
 $mercury_merchantId = "019588466313922";
 $mercury_endpoint = "https://w1.mercurycert.net/PaymentsAPI";
 ?>
