@@ -19,6 +19,9 @@ padding-left:30px;
 margin:10px 0px 15px 0px;
 }
 
+.sensitive {
+	background-color:#f8f8ff;
+}
 
 input.regular-button, button.regular-button  {
 background-color: #ffffff;
