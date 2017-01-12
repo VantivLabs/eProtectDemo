@@ -47,7 +47,47 @@ function getAuth($fields) {
 }
 
 
-function CallAPI($method, $url, $data = false)
+function getAuth_mercury($fields) {
+    $xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:mer="http://www.mercurypay.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <mer:CreditTransaction>
+         <mer:tran><![CDATA[<?xml version="1.0"?>
+    <TStream>
+  <Transaction>
+  <MerchantID>'.$fields['mercury_merchantId'].'</MerchantID>
+  <OperatorID>Test</OperatorID>
+  <TranType>Credit</TranType>
+  <TranCode>SaleByRecordNo</TranCode>
+  <InvoiceNo>12</InvoiceNo>
+  <RefNo>12</RefNo>
+  <Frequency>OneTime</Frequency>
+  <TokenType>RegistrationID</TokenType>
+  <RecordNo>'.$fields['paypageRegistrationId'].'</RecordNo>
+  <Amount>
+  <Purchase>'.number_format($fields['amount'],2,'.','').'</Purchase>
+  </Amount>
+  <Memo>VantivONE eProtect Transaction Simulator</Memo>
+  <AVS>
+  <Address>'.$fields['address'].'</Address>
+  <Zip>'.$fields['zip'].'</Zip>
+  </AVS>
+  <Account>
+     <ExpDate>'.$fields['expDate'].'</ExpDate>
+  </Account>
+  <CVVData>349</CVVData>
+  </Transaction>
+        </TStream>]]></mer:tran>
+         <mer:pw>xYz</mer:pw>
+      </mer:CreditTransaction>
+   </soapenv:Body>
+</soapenv:Envelope>';
+      
+      return($xml);
+}
+
+
+function CallAPI($method, $url, $data = false, $platform = "litle")
 {
     $curl = curl_init();
 
@@ -71,14 +111,27 @@ function CallAPI($method, $url, $data = false)
     //curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     //curl_setopt($curl, CURLOPT_USERPWD, $_POST['username'].':'.$_POST['password']);
 
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: text/xml; charset=UTF-8'));
-	curl_setopt($curl, CURLOPT_HTTPHEADER, array('Expect:'));
+    if ($platform == "litle")      curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:text/xml; charset=utf-8'));
+	if ($platform == "mercurypay") curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:text/xml; charset=utf-8','SOAPAction: "http://www.mercurypay.com/CreditTransaction"'));
+	curl_setopt($curl, CURLOPT_VERBOSE, true);
+	curl_setopt($curl, CURLOPT_STDERR, fopen('php://stderr', 'w'));	
+	if ($platform == "litle")      curl_setopt($curl, CURLOPT_HTTPHEADER, array('Expect:'));
+		
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+	
+	curl_setopt($curl, CURLINFO_HEADER_OUT, true);
 
     $result = curl_exec($curl);
 
-    curl_close($curl);
+    
+	// Uncomment the lines below to debug the structure of the CURL request to see headers
+	//echo '<pre>';
+	//$information = curl_getinfo($curl);
+	//print_r($information);
+	//echo '</pre>';
+	
+	curl_close($curl);
 
     return $result;
 }
