@@ -23,6 +23,7 @@
 						<div class="textarea">
 									<textarea name="xml" id="xml" rows="20" class="user-input" style="width:100%;"><?php echo $xml; ?></textarea>
                                     <input id="user" name="user" type="hidden" value="<?php echo $_POST['user']; ?>">
+									<input id="platform" name="platform" type="hidden" value="litle">
                                     <input id="password" name="password" type="hidden" value="<?php echo $_POST['password']; ?>">
                                     <input id="reportGroup" name="reportGroup" type="hidden" value="<?php echo $_POST['reportGroup']; ?>">
                                     <input id="orderId" name="orderId" type="hidden" value="<?php echo $_POST['orderId']; ?>">

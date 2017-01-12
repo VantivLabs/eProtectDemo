@@ -1,6 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
   "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
-<!-- <html lang="en" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/ dc: http://purl.org/dc/terms/ foaf: http://xmlns.com/foaf/0.1/ og: http://ogp.me/ns# rdfs: http://www.w3.org/2000/01/rdf-schema# sioc: http://rdfs.org/sioc/ns# sioct: http://rdfs.org/sioc/types# skos: http://www.w3.org/2004/02/skos/core# xsd: http://www.w3.org/2001/XMLSchema#"> -->
 
 <?php
   require(dirname(__FILE__).'/includes/form_funcs.php');
@@ -42,11 +41,21 @@
     if ((isset($_GET['form'])) && ($_GET['form']=='auth_result')) {
         ?>
         <body>
-             <!-- <pre>
-            <?php //print_r($_POST);?>
-            </pre>  -->
+            <!--  <pre>
+             <?php //print_r($_POST);?>
+            </pre>   -->
             <?php
-                require(dirname(__FILE__).'/auth_result.php');
+                
+				if ($_POST['platform']=='litle') {
+					require(dirname(__FILE__).'/auth_result.php');
+				}
+				if ($_POST['platform']=='mercurypay') {
+					require(dirname(__FILE__).'/auth_result_mercurypay.php');
+				}
+				if ($_POST['platform']=='core') {
+					require(dirname(__FILE__).'/auth_result_core.php');
+				}
+							
             ?>
         </body>
         <?php
@@ -58,7 +67,7 @@
         ?>
         <body>
             <!-- <pre>
-            <?php // print_r($_POST);?>
+            <?php //print_r($_POST);?>
             </pre> -->
             <?php
 				if ($_POST['platform']=='litle') {
@@ -83,6 +92,18 @@
                       <!-- <script type="text/javascript" src="https://request-prelive.np-securepaypage-litle.com/LitlePayPage/litle-api2.js"></script> -->
 					  <script type="text/javascript" src="<?php echo $eprotect_url;?>"></script>
                       <script>
+					  
+					    function use_mercury_paypage_account() {
+								alert("Using the MercuryPay enabled PayPage account to generate a 19 digit LVT (see eProtect input fields for details)");
+								document.getElementById('request$paypageId').value = document.getElementById("request$paypageId_mercury").value;
+						}
+
+					    function use_litle_paypage_account() {
+								alert("Using the Litle enabled PayPage account to generate the Litle LVT format (see eProtect input fields for details)");
+								document.getElementById('request$paypageId').value = document.getElementById("request$paypageId_litle").value;
+						}
+						
+						
                         function populate_fields() {
                             $('#name').val("John H. Smith");
                             $('#address').val("123 Main Street");
@@ -261,7 +282,7 @@
 							<span id='close'>x</span>
 							<span style="font-size:12px; padding:8px 0px;">
 							<p>This demo illustrates the inner workings of Vantiv eProtect.</p>
-							<p>It shows a technical audience how sensitive card data is replaced by a low-value token used to securely authorize payments across multiple Vantiv payment platforms.</p>
+							<p>It shows a technical audience how sensitive card data is replaced by a low-value token used to securely authorize payments across multiple Vantiv payment platforms. The sensitive fields protected by eProtect are shaded for clarity.</p>
 							<p>To get started, press <b>Step 1: Populate Fields</b> or manually key payment details yourself.</p>
 							<p>To manually adjust input variables (provide different credentials for example) expose the eProtect Input Variables at the bottom of the screen before proceeding to Step 2.</p>
 							</span>						
@@ -347,7 +368,7 @@
 								</div>
 							</div>
 
-							<div>
+							<div class="sensitive">
 								<label class="desc" id="cardtype_label" for="cardtype">Card Type</label>
 								<div>								
 									<select id="cardtype" name="cardtype" class="field select medium" tabindex="10">
@@ -360,21 +381,21 @@
 								</div>
 							</div>		
 
-							<div>
+							<div class="sensitive">
 								<label class="desc" id="ccNum_label" for="ccNum">Card Number</label>
 								<div>
 									<input id="ccNum" name="ccNum" type="text" spellcheck="false" value="" tabindex="11"> 
 								</div>
 							</div>
 							
-							<div>
+							<div class="sensitive">
 								<label class="desc" id="cvv2Num_label" for="cvv2Num">CVV</label>
 								<div>
 									<input id="cvv2Num" name="cvv2Num" type="text" spellcheck="false" value="" tabindex="12"> 
 								</div>
 							</div>
 
-							<div>
+							<div class="sensitive">
 								<label class="desc" id="expDate_label" for="expDate">Expiry Date (MMYY)</label>
 								<div>
 									<input id="expDate" name="expDate" type="text" spellcheck="false" value="" tabindex="13"> 
@@ -387,16 +408,21 @@
 								<div>
 									<input id="platformDefault" name="platform" type="hidden" value="">
 									<div>
-										<input id="platform_0" name="platform" type="radio" value="litle" tabindex="5" checked="checked">
+										<input id="platform_0" name="platform" type="radio" value="litle" tabindex="5" checked="checked" onclick="use_litle_paypage_account();">
 										<label class="choice" for="platform_0">Vantiv eCommerce (Litle)</label>
 									</div>
 									<div>
-										<input id="platform_1" name="platform" type="radio" value="mercurypay" tabindex="6">
+										<input id="platform_1" name="platform" type="radio" value="mercurypay" tabindex="6" onclick="use_mercury_paypage_account();">
 										<label class="choice" for="platform_1">Vantiv IP (MercuryPay)</label>
 									</div>
 									<div>
-										<input id="platform_2" name="platform" type="radio" value="core" tabindex="7">
-										<label class="choice" for="platform_2">Vantiv Core (ISO 8583)</label>
+										<input id="platform_2" name="platform" type="radio" value="core" disabled="disabled" tabindex="7">
+										<label class="choice" for="platform_2">Vantiv IP (Element Express)</label>
+									</div>
+									
+									<div>
+										<input id="platform_3" name="platform" type="radio" value="core" disabled="disabled" tabindex="8">
+										<label class="choice" for="platform_3">Vantiv Core (ISO 8583)</label>
 									</div>
 								</div>
 								</fieldset>
@@ -499,6 +525,10 @@
 							</div>
 							<hr>
 							
+							<input id="mercury_merchantId" name="mercury_merchantId" type="hidden" value="<?php echo $mercury_merchantId;?>">
+							
+					
+							
 							</span>
 							
 						</form>
@@ -535,13 +565,31 @@
 					  <form>
 							
 							<div>
-								<label class="desc" id="request$paypageId_label" for="request$paypageId">paypageId</label>
+								<label class="desc" id="request$paypageId_label" for="request$paypageId">paypageId (Active)</label>
 								<div>
 									<!-- <input id="request$paypageId" name="request$paypageId" type="text" class="field text fn" tabindex="30" value="MDTt5iuXQ2ma99Lb"> -->
-									<input id="request$paypageId" name="request$paypageId" type="text" class="field text fn" tabindex="30" value="<?php echo $eprotect_paypageid;?>">
+									<input id="request$paypageId" name="request$paypageId" type="text" class="field text fn" tabindex="30" value="<?php echo $eprotect_paypageid_litle;?>">
 								</div>
 							</div>
 
+							<div>
+								<label class="desc" id="request$paypageId_label_litle" for="request$paypageId_litle">paypageId (Litle LVT)</label>
+								<div>
+									<!-- <input id="request$paypageId" name="request$paypageId" type="text" class="field text fn" tabindex="30" value="MDTt5iuXQ2ma99Lb"> -->
+									<input id="request$paypageId_litle" name="request$paypageId_litle" type="text" class="field text fn" tabindex="30" value="<?php echo $eprotect_paypageid_litle;?>">
+								</div>
+							</div>
+							
+							
+							<div>
+								<label class="desc" id="request$paypageId_label_mercury" for="request$paypageId_mercury">paypageId (Mercury LVT)</label>
+								<div>
+									<!-- <input id="request$paypageId" name="request$paypageId" type="text" class="field text fn" tabindex="30" value="MDTt5iuXQ2ma99Lb"> -->
+									<input id="request$paypageId_mercury" name="request$paypageId_mercury" type="text" class="field text fn" tabindex="30" value="<?php echo $eprotect_paypageid_mercury;?>">
+								</div>
+							</div>
+							
+							
 							<div>
 								<label class="desc" id="request$merchantTxnId_label" for="request$merchantTxnId">id</label>
 								<div>
